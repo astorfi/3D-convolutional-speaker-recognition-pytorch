@@ -93,9 +93,64 @@ outperforms the d-vector verification system.
 Dataset
 --------------------
 
-Unlike the `Original Implementaion <https://github.com/astorfi/3D-convolutional-speaker-recognition>`_, here we used the `VoxCeleb <http://www.robots.ox.ac.uk/~vgg/data/voxceleb/>`_ publicy available dataset.
+Unlike the `Original Implementaion <https://github.com/astorfi/3D-convolutional-speaker-recognition>`_, here we used the `VoxCeleb <http://www.robots.ox.ac.uk/~vgg/data/voxceleb/>`_ publicy available dataset. The dataset contains annotated audio files. For Speaker Verification, the parts of the audio associated with the subject of interest, however, must be extracted from the ``raw audio files``.
 
-The dataset contains annotated 
+Three steps should be taken to prepare the data after downloading the data associated files.
+
+  1. Extract the specific audio part that the subject of interest is speaking.[`extract_audio.py <https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/0-extract_audio/extract_audio.py>`_]
+  2. Create train/test phase.[`create_phases.py<https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/2-create_phases/create_phases.py>`_]
+  3. Voice Activity Detection to remove the silence. [vad.py `<https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/3-VAD/vad.py>`_]
+  
+
+Creating the dataset object, necessary preprocessing and feature extraction will be performed in the following data class:
+
+.. code:: python
+
+    class AudioDataset():
+    """Audio dataset."""
+
+        def __init__(self, files_path, audio_dir, transform=None):
+            """
+            Args:
+                files_path (string): Path to the .txt file which the address of files are saved in it.
+                root_dir (string): Directory with all the audio files.
+                transform (callable, optional): Optional transform to be applied
+                    on a sample.
+            """
+
+            # self.sound_files = [x.strip() for x in content]
+            self.audio_dir = audio_dir
+            self.transform = transform
+
+            # Open the .txt file and create a list from each line.
+            with open(files_path, 'r') as f:
+                content = f.readlines()
+            # you may also want to remove whitespace characters like `\n` at the end of each line
+            list_files = []
+            for x in content:
+                sound_file_path = os.path.join(self.audio_dir, x.strip().split()[1])
+                try:
+                    with open(sound_file_path, 'rb') as f:
+                        riff_size, _ = wav._read_riff_chunk(f)
+                        file_size = os.path.getsize(sound_file_path)
+
+                    # Assertion error.
+                    assert riff_size == file_size and os.path.getsize(sound_file_path) > 1000, "Bad file!"
+
+                    # Add to list if file is OK!
+                    list_files.append(x.strip())
+                except:
+                    print('file %s is corrupted!' % sound_file_path)
+
+            # Save the correct and healthy sound files to a list.
+            self.sound_files = list_files
+
+        def __len__(self):
+            return len(self.sound_files)
+
+        def __getitem__(self, idx):
+            # Get the sound file path
+            sound_file_path = os.path.join(self.audio_dir, self.sound_files[idx].split()[1]
 
 
 --------------------
