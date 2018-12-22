@@ -98,8 +98,8 @@ Unlike the `Original Implementaion <https://github.com/astorfi/3D-convolutional-
 Three steps should be taken to prepare the data after downloading the data associated files.
 
   1. Extract the specific audio part that the subject of interest is speaking.[`extract_audio.py <https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/0-extract_audio/extract_audio.py>`_]
-  2. Create train/test phase.[`create_phases.py<https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/2-create_phases/create_phases.py>`_]
-  3. Voice Activity Detection to remove the silence. [vad.py `<https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/3-VAD/vad.py>`_]
+  2. Create train/test phase.[`create_phases.py <https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/2-create_phases/create_phases.py>`_]
+  3. Voice Activity Detection to remove the silence. [`vad.py <https://github.com/astorfi/3D-convolutional-speaker-recognition-pytorch/blob/master/code/0-data_preparation/3-VAD/vad.py>`_]
   
 
 Creating the dataset object, necessary preprocessing and feature extraction will be performed in the following data class:
