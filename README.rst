@@ -6,6 +6,13 @@
     :target: https://github.com/astorfi/3D-convolutional-speaker-recognition/pulls
 .. image:: https://badges.frapsoft.com/os/v2/open-source.svg?v=102
     :target: https://github.com/ellerbrock/open-source-badge/
+    
+==============================
+Table of Contents
+==============================
+.. contents::
+  :local:
+  :depth: 4
 
 
 This repository contains the Pytorch code release for our paper titled as *"Text-Independent
