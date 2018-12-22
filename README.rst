@@ -89,6 +89,14 @@ speaker-related information and building a more robust system to cope with
 within-speaker variation. We demonstrate that the proposed method significantly
 outperforms the d-vector verification system.
 
+--------------------
+Dataset
+--------------------
+
+Unlike the `Original Implementaion <https://github.com/astorfi/3D-convolutional-speaker-recognition>`_, here we used the `VoxCeleb <http://www.robots.ox.ac.uk/~vgg/data/voxceleb/>`_ publicy available dataset.
+
+The dataset contains annotated 
+
 
 --------------------
 Code Implementation
