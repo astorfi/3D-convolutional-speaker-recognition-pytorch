@@ -1,24 +1,14 @@
 =============================================================================================
-Using 3D Convolutional Neural Networks for Speaker Verification - `Official Project Page`_
+3D Convolutional Neural Networks for Speaker Verification - `Official Project Page`_
 =============================================================================================
 
-
-
-.. image:: https://travis-ci.org/astorfi/3D-convolutional-speaker-recognition.svg?branch=master
-    :target: https://travis-ci.org/astorfi/3D-convolutional-speaker-recognition
-.. image:: https://coveralls.io/repos/github/astorfi/3D-convolutional-speaker-recognition/badge.svg?branch=master
-    :target: https://coveralls.io/github/astorfi/3D-convolutional-speaker-recognition?branch=master
-.. image:: https://codecov.io/gh/astorfi/3D-convolutional-speaker-recognition/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/astorfi/3D-convolutional-speaker-recognition
 .. image:: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
     :target: https://github.com/astorfi/3D-convolutional-speaker-recognition/pulls
 .. image:: https://badges.frapsoft.com/os/v2/open-source.svg?v=102
     :target: https://github.com/ellerbrock/open-source-badge/
-.. image:: https://zenodo.org/badge/94718341.svg
-   :target: https://zenodo.org/badge/latestdoi/94718341
 
 
-This repository contains the code release for our paper titled as *"Text-Independent
+This repository contains the Pytorch code release for our paper titled as *"Text-Independent
 Speaker Verification Using 3D Convolutional Neural Networks"*. The link to the paper_ is
 provided as well.
 
@@ -26,9 +16,9 @@ provided as well.
 .. _Official Project Page: https://codeocean.com/2017/08/01/3d-convolutional-neural-networks-for-speaker-recognition/code
 
 .. _paper: https://arxiv.org/abs/1705.09422
-.. _TensorFlow: https://www.tensorflow.org/
+.. _Pytorch: https://pytorch.org
 
-The code has been developed using TensorFlow_. The input pipeline must be prepared by the users.
+The code has been developed using Pytorch_. The input pipeline must be prepared by the users.
 This code is aimed to provide the implementation for Speaker Verification (SR) by using 3D convolutional neural networks
 following the SR protocol.
 
@@ -49,23 +39,6 @@ If you used this code, please kindly consider citing the following paper:
       journal={arXiv preprint arXiv:1705.09422},
       year={2017}
     }
-
------
-DEMO
------
-
-For running a demo, after forking the repository, run the following scrit:
-
-.. code:: shell
-
-    ./run.sh
-
-|speakerrecognition|
-
-.. |speakerrecognition| image:: readme_images/speakerrecognition.png
-    :target: https://asciinema.org/a/yfy6FryUAWWMl1vgylrRagMdw
-
-
 
 --------------
 General View
@@ -145,51 +118,32 @@ The **speech features** have been extracted using [SpeechPy]_ package.
 Implementation of 3D Convolutional Operation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. _Slim: https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim
-
-The Slim_ high-level API made our life very easy. The following script has been used for our
+The following script has been used for our
 implementation:
 
 .. code:: python
 
-        net = slim.conv2d(inputs, 16, [3, 1, 5], stride=[1, 1, 1], scope='conv11')
-        net = PReLU(net, 'conv11_activation')
-        net = slim.conv2d(net, 16, [3, 9, 1], stride=[1, 2, 1], scope='conv12')
-        net = PReLU(net, 'conv12_activation')
-        net = tf.nn.max_pool3d(net, strides=[1, 1, 1, 2, 1], ksize=[1, 1, 1, 2, 1], padding='VALID', name='pool1')
-
-        ############ Conv-2 ###############
-        ############ Conv-1 ###############
-        net = slim.conv2d(net, 32, [3, 1, 4], stride=[1, 1, 1], scope='conv21')
-        net = PReLU(net, 'conv21_activation')
-        net = slim.conv2d(net, 32, [3, 8, 1], stride=[1, 2, 1], scope='conv22')
-        net = PReLU(net, 'conv22_activation')
-        net = tf.nn.max_pool3d(net, strides=[1, 1, 1, 2, 1], ksize=[1, 1, 1, 2, 1], padding='VALID', name='pool2')
-
-        ############ Conv-3 ###############
-        ############ Conv-1 ###############
-        net = slim.conv2d(net, 64, [3, 1, 3], stride=[1, 1, 1], scope='conv31')
-        net = PReLU(net, 'conv31_activation')
-        net = slim.conv2d(net, 64, [3, 7, 1], stride=[1, 1, 1], scope='conv32')
-        net = PReLU(net, 'conv32_activation')
-        # net = slim.max_pool2d(net, [1, 1], stride=[4, 1], scope='pool1')
-
-        ############ Conv-4 ###############
-        net = slim.conv2d(net, 128, [3, 1, 3], stride=[1, 1, 1], scope='conv41')
-        net = PReLU(net, 'conv41_activation')
-        net = slim.conv2d(net, 128, [3, 7, 1], stride=[1, 1, 1], scope='conv42')
-        net = PReLU(net, 'conv42_activation')
-        # net = slim.max_pool2d(net, [1, 1], stride=[4, 1], scope='pool1')
-
-        ############ Conv-5 ###############
-        net = slim.conv2d(net, 128, [4, 3, 3], stride=[1, 1, 1], normalizer_fn=None, scope='conv51')
-        net = PReLU(net, 'conv51_activation')
-
-        # net = slim.conv2d(net, 256, [1, 1], stride=[1, 1], scope='conv52')
-        # net = PReLU(net, 'conv52_activation')
-
-        # Last layer which is the logits for classes
-        logits = tf.contrib.layers.conv2d(net, num_classes, [1, 1, 1], activation_fn=None, scope='fc')
+        self.conv11 = nn.Conv3d(1, 16, (4, 9, 9), stride=(1, 2, 1))
+        self.conv11_bn = nn.BatchNorm3d(16)
+        self.conv11_activation = torch.nn.PReLU()
+        self.conv12 = nn.Conv3d(16, 16, (4, 9, 9), stride=(1, 1, 1))
+        self.conv12_bn = nn.BatchNorm3d(16)
+        self.conv12_activation = torch.nn.PReLU()
+        self.conv21 = nn.Conv3d(16, 32, (3, 7, 7), stride=(1, 1, 1))
+        self.conv21_bn = nn.BatchNorm3d(32)
+        self.conv21_activation = torch.nn.PReLU()
+        self.conv22 = nn.Conv3d(32, 32, (3, 7, 7), stride=(1, 1, 1))
+        self.conv22_bn = nn.BatchNorm3d(32)
+        self.conv22_activation = torch.nn.PReLU()
+        self.conv31 = nn.Conv3d(32, 64, (3, 5, 5), stride=(1, 1, 1))
+        self.conv31_bn = nn.BatchNorm3d(64)
+        self.conv31_activation = torch.nn.PReLU()
+        self.conv32 = nn.Conv3d(64, 64, (3, 5, 5), stride=(1, 1, 1))
+        self.conv32_bn = nn.BatchNorm3d(64)
+        self.conv32_activation = torch.nn.PReLU()
+        self.conv41 = nn.Conv3d(64, 128, (3, 3, 3), stride=(1, 1, 1))
+        self.conv41_bn = nn.BatchNorm3d(128)
+        self.conv41_activation = torch.nn.PReLU()
 
 
 As it can be seen, ``slim.conv2d`` has been used. However, simply by using 3D kernels as ``[k_x, k_y, k_z]``
@@ -198,30 +152,6 @@ and ``stride=[a, b, c]`` it can be turned into a 3D-conv operation. The base of 
 
 .. _Documentation: https://www.tensorflow.org/api_docs/python/tf/contrib/layers
 
-
------------
-Disclaimer
------------
-
-.. _link: https://github.com/tensorflow/models/tree/master/slim
-
-The code architecture part has been heavily inspired by Slim_ and Slim image classification
-library. Please refer to this link_ for further details.
-
----------
-Citation
----------
-
-If you used this code please kindly cite the following paper:
-
-.. code:: shell
-
-  @article{torfi2017text,
-    title={Text-Independent Speaker Verification Using 3D Convolutional Neural Networks},
-    author={Torfi, Amirsina and Nasrabadi, Nasser M and Dawson, Jeremy},
-    journal={arXiv preprint arXiv:1705.09422},
-    year={2017}
-  }
 
 --------
 License
