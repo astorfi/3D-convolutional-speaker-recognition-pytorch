@@ -1,4 +1,4 @@
-.. image:: _img/readme_images/follow-twitter.gif
+.. image:: readme_images/follow-twitter.gif
    :height: 100px
    :width: 200 px
    :scale: 50 %
